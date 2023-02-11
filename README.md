@@ -23,4 +23,5 @@ Also provided is a modified cdll_client_int.cpp with the modifications needed fo
 SDK 2013 by default does not have the modifications to the regular GameUI that were made that do things such as hide the main menu logo, or have the new loading screens. </br>
 Provided in `game/bin` is a copy of GameUI for SDK 2013 with the modifications you can use, unfortunately the code for this cannot be provided.
 
-Special thanks to Madi for taking my code and making it compile against SDK 2013.
+Special thanks to Madi for taking my code and making it compile against SDK 2013.</br>
+Thanks to my friend Dan Smith for helping with getting some screenshots for the chapter art.
