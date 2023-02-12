@@ -75,7 +75,7 @@ void GamepadUI::Initialize( CreateInterfaceFn factory )
         return;
     }
 
-    GamepadUI_Log( "Overiding menu.\n" );
+    GamepadUI_Log( "Overriding menu.\n" );
 
     m_pGameUI->SetMainMenuOverride( GetBaseVPanel() );
 
