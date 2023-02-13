@@ -84,7 +84,7 @@ bool GamepadUIBasePanel::StartBackgroundMusic( float flVolume )
 
     /* mostly from GameUI */
     char path[ 512 ];
-    Q_snprintf( path, sizeof( path ), "sound/ui/gamestartup.mp3" );
+    Q_snprintf( path, sizeof( path ), "sound/ui/gamestartup*.mp3" );
     Q_FixSlashes( path );
     CUtlVector<char*> fileNames;
     FileFindHandle_t fh;
