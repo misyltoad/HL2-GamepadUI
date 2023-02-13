@@ -355,10 +355,10 @@ static ConVar *g_pcv_ThreadMode = NULL;
 #if defined( GAMEPADUI )
 const bool IsSteamDeck()
 {
-	if ( CommandLine()->HasParm( "-gamepadui" ) )
+	if ( CommandLine()->FindParm( "-gamepadui" ) )
 		return true;
 
-	if ( CommandLine()->HasParm( "-nogamepadui" ) )
+	if ( CommandLine()->FindParm( "-nogamepadui" ) )
 		return false;
 
 	const char *pszSteamDeckEnv = getenv( "SteamDeck" );
