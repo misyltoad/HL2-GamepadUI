@@ -1415,7 +1415,7 @@ void GamepadUIOptionsPanel::OnCommand( char const* pCommand )
 #else
         V_snwprintf( wszBuf, 4096, L"%S\n\n%S\n\n%S", bink.String(), miles.String(), voice.String() );
 #endif
-		new GamepadUIGenericConfirmationPanel( GamepadUI::GetInstance().GetBasePanel(), "TechCredits", title.String(), wszBuf,
+		new GamepadUIGenericConfirmationPanel( GamepadUIOptionsPanel::GetInstance(), "TechCredits", title.String(), wszBuf,
 		[](){}, true, false);
     }
     else
