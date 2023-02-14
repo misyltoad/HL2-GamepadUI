@@ -8,10 +8,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-// Quick definitions for button sounds.
-// These ideally will be merged to the scheme config someday. (Madi)
-#define BTN_ARMED_SOUND "UI/buttonrollover.wav"
-#define BNT_RELEASED_SOUND "UI/buttonclickrelease.wav"
+#define DEFAULT_BTN_ARMED_SOUND "ui/buttonrollover.wav"
+#define DEFAULT_BTN_RELEASED_SOUND "ui/buttonclickrelease.wav"
 
 
 GamepadUIButton::GamepadUIButton( vgui::Panel *pParent, vgui::Panel* pActionSignalTarget, const char *pSchemeFile, const char *pCommand, const char *pText, const char *pDescription )
@@ -33,13 +31,22 @@ GamepadUIButton::GamepadUIButton( vgui::Panel *pParent, vgui::Panel* pActionSign
 void GamepadUIButton::ApplySchemeSettings(vgui::IScheme* pScheme)
 {
     BaseClass::ApplySchemeSettings(pScheme);
+	
+    const char *pButtonSound = pScheme->GetResourceString( "Button.Sound.Armed" );
+    if (pButtonSound && *pButtonSound)
+        SetArmedSound( pButtonSound );
+    else
+        SetArmedSound( DEFAULT_BTN_ARMED_SOUND );
 
-    // TODO: Add me to scheme config stuff eventually.
-    // right now this is hardcoded for Half-Life 2/Portal
-    // etc, but modders might want to play around more.
-    SetArmedSound( BTN_ARMED_SOUND );
-    SetReleasedSound( BNT_RELEASED_SOUND );
-    SetDepressedSound( NULL );
+    pButtonSound = pScheme->GetResourceString( "Button.Sound.Released" );
+    if (pButtonSound && *pButtonSound)
+        SetReleasedSound( pButtonSound );
+    else
+        SetReleasedSound( DEFAULT_BTN_RELEASED_SOUND );
+
+    pButtonSound = pScheme->GetResourceString( "Button.Sound.Depressed" );
+    if (pButtonSound && *pButtonSound)
+        SetDepressedSound( pButtonSound );
 
     SetPaintBorderEnabled( false );
     SetPaintBackgroundEnabled( false );
