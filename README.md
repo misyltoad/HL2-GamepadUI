@@ -18,6 +18,8 @@ You will need to add gamepadui for each game to your projects.vgc and groups.vgc
 
 Also provided is a modified cdll_client_int.cpp with the modifications needed for GamepadUI stuff to work.</br>Check out the parts that reference GamepadUI and merge them into your codebase.
 
+Lastly, the function PostMessageToAllSiblingsOfType will need to be re-enabled in Panel.h, by removing its associated #if 0 / #endif. Despite the code comment declaring otherwise, this function is safe to compile, and is necessary for GamepadUI to compile.
+
 ## SDK 2013 Notes
 
 SDK 2013 by default does not have the modifications to the regular GameUI that were made that do things such as hide the main menu logo, or have the new loading screens. </br>
