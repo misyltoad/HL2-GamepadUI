@@ -160,6 +160,7 @@ struct GamepadUIOption
 {
     GamepadUIString strOptionText;
     int nValue = 0;
+    const char* sValue = "";
 
     union
     {
@@ -167,7 +168,6 @@ struct GamepadUIOption
         {
             int nWidth;
             int nHeight;
-            const char* strVal;
         };
         void *pData;
     } userdata;
@@ -403,7 +403,7 @@ public:
             if ( m_bSignOnly )
                 m_cvar.SetValue( abs( m_cvar.GetFloat() ) * m_Options[m_nSelectedItem].nValue );
             else if (m_bUsesString)
-                m_cvar.SetValue(m_Options[m_nSelectedItem].userdata.strVal);
+                m_cvar.SetValue(m_Options[m_nSelectedItem].sValue);
             else
                 m_cvar.SetValue( m_Options[ m_nSelectedItem ].nValue );
         }
@@ -416,7 +416,7 @@ public:
 
         if (m_bUsesString)
         {
-            dirty = V_strcmp(m_Options[m_nSelectedItem].userdata.strVal, m_cvar.GetString());
+            dirty = V_strcmp(m_Options[m_nSelectedItem].sValue, m_cvar.GetString());
         }
         else
         {
@@ -490,7 +490,7 @@ public:
                 const char *sCurrentValue = m_cvar.GetString();
                 for (int i = 0; i < m_Options.Count(); i++)
                 {
-                    if (!V_strcmp(m_Options[i].userdata.strVal,sCurrentValue))
+                    if (!V_strcmp(m_Options[i].sValue,sCurrentValue))
                         m_nSelectedItem = i;
                 }
             }
@@ -1871,7 +1871,7 @@ void GamepadUIOptionsPanel::LoadOptionTabs( const char *pszOptionsFile )
                                 GamepadUIOption option;
                                 if (bUsesString)
                                 {
-                                    option.userdata.strVal = pOptionData->GetName();
+                                    option.sValue = pOptionData->GetName();
                                     option.nValue = i;
                                 }
                                 else
