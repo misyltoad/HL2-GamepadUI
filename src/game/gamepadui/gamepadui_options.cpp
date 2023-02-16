@@ -1865,13 +1865,14 @@ void GamepadUIOptionsPanel::LoadOptionTabs( const char *pszOptionsFile )
                         KeyValues *pOptions = pItemData->FindKey( "options" );
                         if ( pOptions )
                         {
+                            int i = 0;
                             for ( KeyValues* pOptionData = pOptions->GetFirstSubKey(); pOptionData != NULL; pOptionData = pOptionData->GetNextKey() )
                             {
                                 GamepadUIOption option;
                                 if (bUsesString)
                                 {
                                     option.userdata.strVal = pOptionData->GetName();
-                                    option.nValue = 0;
+                                    option.nValue = i;
                                 }
                                 else
                                 {
@@ -1880,6 +1881,7 @@ void GamepadUIOptionsPanel::LoadOptionTabs( const char *pszOptionsFile )
 
                                 option.strOptionText = GamepadUIString( pOptionData->GetString() );
                                 button->AddOptionItem( option );
+                                ++i;
                             }
                         }
                         else if ( pszOptionsFrom && *pszOptionsFrom )
