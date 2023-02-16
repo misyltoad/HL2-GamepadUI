@@ -53,6 +53,7 @@ public:
     void UpdateGradients();
 
     void OnThink() OVERRIDE;
+    void ApplySchemeSettings( vgui::IScheme *pScheme ) OVERRIDE;
     void OnCommand( char const* pCommand ) OVERRIDE;
 
     MESSAGE_FUNC_HANDLE( OnGamepadUIButtonNavigatedTo, "OnGamepadUIButtonNavigatedTo", button );
@@ -127,6 +128,28 @@ public:
         }
 
         PaintText();
+    }
+	
+    void ApplySchemeSettings( vgui::IScheme* pScheme )
+    {
+        BaseClass::ApplySchemeSettings( pScheme );
+
+        if (GamepadUI::GetInstance().GetScreenRatio() != 1.0f)
+        {
+            float flScreenRatio = GamepadUI::GetInstance().GetScreenRatio();
+
+            m_flHeight *= flScreenRatio;
+            for (int i = 0; i < ButtonStates::Count; i++)
+                m_flHeightAnimationValue[i] *= flScreenRatio;
+
+            // Also change the text offset
+            m_flTextOffsetY *= flScreenRatio;
+            for (int i = 0; i < ButtonStates::Count; i++)
+                m_flTextOffsetYAnimationValue[i] *= flScreenRatio;
+
+            SetSize( m_flWidth, m_flHeight + m_flExtraHeight );
+            DoAnimations( true );
+        }
     }
 
     void NavigateTo() OVERRIDE
@@ -302,6 +325,17 @@ void GamepadUINewGamePanel::OnThink()
     BaseClass::OnThink();
 
     LayoutChapterButtons();
+}
+
+void GamepadUINewGamePanel::ApplySchemeSettings( vgui::IScheme* pScheme )
+{
+    BaseClass::ApplySchemeSettings( pScheme );
+
+    if (GamepadUI::GetInstance().GetScreenRatio() != 1.0f)
+    {
+        float flScreenRatio = GamepadUI::GetInstance().GetScreenRatio();
+        m_ChapterOffsetX *= (flScreenRatio*flScreenRatio);
+    }
 }
 
 void GamepadUINewGamePanel::OnGamepadUIButtonNavigatedTo( vgui::VPANEL button )

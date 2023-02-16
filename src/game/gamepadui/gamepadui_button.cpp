@@ -63,6 +63,15 @@ void GamepadUIButton::ApplySchemeSettings(vgui::IScheme* pScheme)
         else
             m_flCachedExtraHeight = 0.0f;
     }
+	
+    if (GamepadUI::GetInstance().GetScreenRatio() != 1.0f)
+    {
+        float flScreenRatio = GamepadUI::GetInstance().GetScreenRatio();
+
+        m_flWidth *= flScreenRatio;
+        for (int i = 0; i < ButtonStates::Count; i++)
+            m_flWidthAnimationValue[i] *= flScreenRatio;
+    }
 
     SetSize( m_flWidth, m_flHeight + m_flExtraHeight );
     DoAnimations( true );

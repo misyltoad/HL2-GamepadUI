@@ -44,6 +44,8 @@ public:
     void OnLevelInitializePreEntity() OVERRIDE;
     void OnLevelInitializePostEntity() OVERRIDE;
     void OnLevelShutdown() OVERRIDE;
+	
+    void VidInit() OVERRIDE;
 
     bool IsInLevel() const;
     bool IsInBackgroundLevel() const;
@@ -75,6 +77,8 @@ public:
     void ResetToMainMenuGradients();
 
     CSteamAPIContext* GetSteamAPIContext() { return &m_SteamAPIContext; }
+	
+    float GetScreenRatio() const { return m_flScreenRatio; }
 
 private:
 
@@ -97,6 +101,8 @@ private:
     CSteamAPIContext m_SteamAPIContext;
 
     GamepadUIMainMenu* GetMainMenu() const;
+	
+    float   m_flScreenRatio = 1.0f;
 
     static GamepadUI *s_pGamepadUI;
 };

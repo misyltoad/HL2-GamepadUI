@@ -1307,6 +1307,11 @@ int CHLClient::HudVidInit( void )
 
 	GetClientVoiceMgr()->VidInit();
 
+#if defined(GAMEPADUI)
+	if (g_pGamepadUI != nullptr)
+		g_pGamepadUI->VidInit();
+#endif // GAMEPADUI
+
 	return 1;
 }
 

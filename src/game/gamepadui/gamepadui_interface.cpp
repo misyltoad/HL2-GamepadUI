@@ -132,6 +132,29 @@ void GamepadUI::OnLevelShutdown()
     GetMainMenu()->OnMenuStateChanged();
 }
 
+void GamepadUI::VidInit()
+{
+    int w, h;
+    vgui::surface()->GetScreenSize( w, h );
+
+    Assert( w != 0 && h != 0 );
+
+    // Scale elements proportional to the aspect ratio's distance from 16:10
+    const float flDefaultInvAspect = 0.625f;
+    float flInvAspectRatio = ((float)h) / ((float)w);
+
+    if (flInvAspectRatio != flDefaultInvAspect)
+    {
+        m_flScreenRatio = 1.0f - (flInvAspectRatio - flDefaultInvAspect);
+    }
+    else
+    {
+        m_flScreenRatio = 1.0f;
+    }
+
+    m_pBasePanel->InvalidateLayout( false, true );
+}
+
 
 bool GamepadUI::IsInLevel() const
 {
