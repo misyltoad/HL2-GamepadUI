@@ -12,11 +12,15 @@ It's definitely not the cleanest thing in existence, especially as it was pretty
 
 ## What is here?
 
-Provided is the full GamepadUI code, as well as the .vpc projects to build it.
+Provided is the full GamepadUI code, as well as the .vpc projects to build it. Pre-built binaries for stock Source SDK 2013 are included as well (Windows only right now).
+
+## Compiling
 
 You will need to add gamepadui for each game to your projects.vgc and groups.vgc for the Visual Studio, etc projects to be generated.
 
-Also provided is a modified cdll_client_int.cpp with the modifications needed for GamepadUI stuff to work.</br>Check out the parts that reference GamepadUI and merge them into your codebase.
+Also provided is a modified cdll_client_int.cpp with the modifications needed for GamepadUI stuff to work.</br>Check out the parts that reference GamepadUI and merge them into your codebase. You will also need to add a definition for GAMEPADUI somewhere in the preprocessor section of the client VPC script, to enable those edits. example: 
+
+$PreprocessorDefinitions		"$BASE;GAMEPADUI"
 
 Lastly, the function PostMessageToAllSiblingsOfType will need to be re-enabled in Panel.h, by removing its associated #if 0 / #endif. Despite the code comment declaring otherwise, this function is safe to compile, and is necessary for GamepadUI to compile.
 
