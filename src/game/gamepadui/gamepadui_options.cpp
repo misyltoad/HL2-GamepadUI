@@ -167,6 +167,7 @@ struct GamepadUIOption
         {
             int nWidth;
             int nHeight;
+            const char* strVal;
         };
         void *pData;
     } userdata;
@@ -353,9 +354,10 @@ class GamepadUIWheelyWheel : public GamepadUIConvarButton
 public:
     DECLARE_CLASS_SIMPLE( GamepadUIWheelyWheel, GamepadUIConvarButton );
 
-    GamepadUIWheelyWheel( const char *pszCvar, const char *pszCvarDepends, bool bInstantApply, bool bSignOnly, vgui::Panel* pParent, vgui::Panel* pActionSignalTarget, const char *pSchemeFile, const char* pCommand, const char *pText, const char *pDescription )
+    GamepadUIWheelyWheel( const char *pszCvar, const char *pszCvarDepends, bool bInstantApply, bool bSignOnly, bool bUsesString, vgui::Panel* pParent, vgui::Panel* pActionSignalTarget, const char *pSchemeFile, const char* pCommand, const char *pText, const char *pDescription )
         : BaseClass( pszCvar, pszCvarDepends, bInstantApply, pParent, pActionSignalTarget, pSchemeFile, pCommand, pText, pDescription )
         , m_bSignOnly( bSignOnly )
+        , m_bUsesString( bUsesString )
     {
     }
 
@@ -400,6 +402,8 @@ public:
         {
             if ( m_bSignOnly )
                 m_cvar.SetValue( abs( m_cvar.GetFloat() ) * m_Options[m_nSelectedItem].nValue );
+            else if (m_bUsesString)
+                m_cvar.SetValue(m_Options[m_nSelectedItem].userdata.strVal);
             else
                 m_cvar.SetValue( m_Options[ m_nSelectedItem ].nValue );
         }
@@ -408,7 +412,18 @@ public:
 
     bool IsDirty() OVERRIDE
     {
-        return m_cvar.IsValid() && GetCvarValue() != m_Options[m_nSelectedItem].nValue;
+        bool dirty = false;
+
+        if (m_bUsesString)
+        {
+            dirty = V_strcmp(m_Options[m_nSelectedItem].userdata.strVal, m_cvar.GetString());
+        }
+        else
+        {
+            dirty = GetCvarValue() != m_Options[m_nSelectedItem].nValue;
+        }
+
+        return m_cvar.IsValid() && dirty;
     }
 
     virtual void Paint()
@@ -470,13 +485,25 @@ public:
     {
         if ( m_cvar.IsValid() )
         {
-            const int nCurrentValue = GetCvarValue();
-            for ( int i = 0; i < m_Options.Count(); i++)
+            if (m_bUsesString)
             {
-                if ( m_Options[ i ].nValue == nCurrentValue )
-                    m_nSelectedItem = i;
+                const char *sCurrentValue = m_cvar.GetString();
+                for (int i = 0; i < m_Options.Count(); i++)
+                {
+                    if (!V_strcmp(m_Options[i].userdata.strVal,sCurrentValue))
+                        m_nSelectedItem = i;
+                }
             }
-        }
+            else
+            {
+	            const int nCurrentValue = GetCvarValue();
+	            for ( int i = 0; i < m_Options.Count(); i++)
+	            {
+	                if ( m_Options[ i ].nValue == nCurrentValue )
+	                    m_nSelectedItem = i;
+	            }
+        	}
+    	}
     }
 
     GamepadUIOption *GetOption( int nIndex )
@@ -494,6 +521,7 @@ public:
 private:
 
     bool m_bSignOnly = false;
+    bool m_bUsesString = false;
     int m_nSelectedItem = 0;
     CUtlVector< GamepadUIOption > m_Options;
 
@@ -1825,8 +1853,9 @@ void GamepadUIOptionsPanel::LoadOptionTabs( const char *pszOptionsFile )
                         const char *pszCvarDepends = pItemData->GetString( "depends_on" );
                         bool bInstantApply = pItemData->GetBool( "instantapply" );
                         bool bSignOnly = pItemData->GetBool( "signonly" );
+                        bool bUsesString = pItemData->GetBool("usesstring");
                         auto button = new GamepadUIWheelyWheel(
-                            pszCvar, pszCvarDepends, bInstantApply, bSignOnly,
+                            pszCvar, pszCvarDepends, bInstantApply, bSignOnly, bUsesString,
                             this, this,
                             GAMEPADUI_RESOURCE_FOLDER "schemeoptions_wheelywheel.res",
                             "button_pressed",
@@ -1839,7 +1868,16 @@ void GamepadUIOptionsPanel::LoadOptionTabs( const char *pszOptionsFile )
                             for ( KeyValues* pOptionData = pOptions->GetFirstSubKey(); pOptionData != NULL; pOptionData = pOptionData->GetNextKey() )
                             {
                                 GamepadUIOption option;
-                                option.nValue = V_atoi( pOptionData->GetName() );
+                                if (bUsesString)
+                                {
+                                    option.userdata.strVal = pOptionData->GetName();
+                                    option.nValue = 0;
+                                }
+                                else
+                                {
+                                	option.nValue = V_atoi( pOptionData->GetName() );
+                                }
+
                                 option.strOptionText = GamepadUIString( pOptionData->GetString() );
                                 button->AddOptionItem( option );
                             }
