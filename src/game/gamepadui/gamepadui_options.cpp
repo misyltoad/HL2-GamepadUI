@@ -41,7 +41,9 @@ ConVar _gamepadui_displaymode( "_gamepadui_displaymode", "0", FCVAR_NONE, "", On
 ConVar _gamepadui_resolution( "_gamepadui_resolution", "0" );
 ConVar _gamepadui_sound_quality( "_gamepadui_sound_quality", "0" );
 ConVar _gamepadui_closecaptions( "_gamepadui_closecaptions", "0" );
+#ifdef HL2_RETAIL
 ConVar _gamepadui_hudaspect( "_gamepadui_hudaspect", "0" );
+#endif
 ConVar _gamepadui_skill( "_gamepadui_skill", "0" );
 
 struct GamepadUITab
@@ -944,6 +946,7 @@ int GetCurrentCloseCaptions()
     return 0;
 }
 
+#ifdef HL2_RETAIL
 int GetCurrentHudAspectRatio()
 {
     ConVarRef hud_aspect( "hud_aspect" );
@@ -960,6 +963,7 @@ int GetCurrentHudAspectRatio()
 	else
 		return 0;
 }
+#endif
 
 int GetCurrentSkill()
 {
@@ -1118,6 +1122,7 @@ void FlushPendingCloseCaptions()
 	GamepadUI::GetInstance().GetEngineClient()->ClientCmd_Unrestricted( szCmd );
 }
 
+#ifdef HL2_RETAIL
 void FlushPendingHudAspectRatio()
 {
     ConVarRef hud_aspect( "hud_aspect" );
@@ -1140,6 +1145,7 @@ void FlushPendingHudAspectRatio()
         break;
     }
 }
+#endif
 
 void FlushPendingSkill()
 {
@@ -1156,7 +1162,9 @@ void UpdateHelperConvars()
     _gamepadui_displaymode.SetValue( GetCurrentDisplayMode() );
     _gamepadui_sound_quality.SetValue( GetCurrentSoundQuality() );
     _gamepadui_closecaptions.SetValue( GetCurrentCloseCaptions() );
+#ifdef HL2_RETAIL
     _gamepadui_hudaspect.SetValue( GetCurrentHudAspectRatio() );
+#endif
     _gamepadui_skill.SetValue( GetCurrentSkill() );
 }
 
@@ -1168,7 +1176,9 @@ void FlushHelperConVars()
     FlushPendingResolution();
     FlushPendingSoundQuality();
     FlushPendingCloseCaptions();
+#ifdef HL2_RETAIL
     FlushPendingHudAspectRatio();
+#endif
     FlushPendingSkill();
 }
 
