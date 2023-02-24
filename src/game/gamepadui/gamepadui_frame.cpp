@@ -256,7 +256,7 @@ void GamepadUIFrame::OnKeyCodePressed( vgui::KeyCode code )
     case KEY_XBUTTON_X:
         for ( int i = 0; i < FooterButtons::MaxFooterButtons; i++ )
         {
-            if ( FooterButtons::GetButtonByIdx(i) & ( FooterButtons::BonusMaps ) )
+            if ( FooterButtons::GetButtonByIdx(i) & ( FooterButtons::BonusMaps | FooterButtons::UseDefaults ) )
             {
                 if ( m_pFooterButtons[i] )
                     m_pFooterButtons[i]->ForceDepressed( true );
@@ -340,7 +340,7 @@ void GamepadUIFrame::OnKeyCodeReleased( vgui::KeyCode code )
     case KEY_XBUTTON_X:
         for ( int i = 0; i < FooterButtons::MaxFooterButtons; i++ )
         {
-            if ( FooterButtons::GetButtonByIdx(i) & ( FooterButtons::BonusMaps ) )
+            if ( FooterButtons::GetButtonByIdx(i) & ( FooterButtons::BonusMaps | FooterButtons::UseDefaults ) )
             {
                 if ( m_pFooterButtons[i] )
                 {
