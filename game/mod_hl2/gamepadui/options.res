@@ -262,22 +262,6 @@
 				"options_from"	"displaymode"
 			}
 
-			"HUDAspectRatio"
-			{
-				"text"			"#GameUI_HUDAspectRatio"
-				"type"			"wheelywheel"
-
-				"convar"		"_gamepadui_hudaspect"
-				"instantapply"	"1"
-				"options"
-				{
-					"0"			"#GameUI_Achievement_Unlocked"
-					"1"			"#GameUI_AspectNormal"
-					"2"			"#GameUI_AspectWide16x9"
-					"3"			"#GameUI_AspectWide16x10"
-				}
-			}
-
 			"AdvancedHeader"
 			{
 				"text"			"#GameUI_AdvancedNoEllipsis"
