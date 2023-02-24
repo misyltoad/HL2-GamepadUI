@@ -1702,16 +1702,32 @@ void GamepadUIOptionsPanel::OnGamepadUIButtonNavigatedTo( vgui::VPANEL button )
         if ( nY + m_flFooterButtonsOffsetY + m_nFooterButtonHeight + pButton->GetTall() > nParentH || nY < m_flTabsOffsetY + flTabButtonHeight )
         {
             int nTargetY = 0;
-            for ( GamepadUIButton *pFindButton : m_Tabs[ GetActiveTab() ].pButtons )
+            int nThisButton = -1;
+            int nHeader = -1;
+            for ( int i = 0; i < m_Tabs[ GetActiveTab() ].pButtons.Count(); i++ )
             {
-                if ( pFindButton == pButton )
+                if ( m_Tabs[ GetActiveTab() ].pButtons[i] == pButton)
+                {
+                    nThisButton = i;
                     break;
-                nTargetY += pFindButton->m_flHeight;
+                }
+				
+                // For now, headers can be identified as disabled buttons
+                if (!m_Tabs[GetActiveTab()].pButtons[i]->IsEnabled())
+                    nHeader = i;
+                else
+                    nHeader = -1;
+
+                nTargetY += m_Tabs[ GetActiveTab() ].pButtons[i]->m_flHeight;
             }
 
-            // Hack for section headers
-            if ( m_Tabs[ GetActiveTab() ].pButtons.Count() >= 2 && m_Tabs[ GetActiveTab() ].pButtons[ 1 ] == pButton )
-                nTargetY = 0;
+            // This button isn't part of the current tab, so don't scroll
+            if (nThisButton == -1)
+                return;
+
+            // If this button has a section header above it and we're going up, scroll to it
+            if ( nHeader != -1 && nY < nParentH / 2 )
+                nTargetY -= m_Tabs[ GetActiveTab() ].pButtons[ nHeader ]->m_flHeight;
 
             if ( nY < nParentH / 2 )
             {
