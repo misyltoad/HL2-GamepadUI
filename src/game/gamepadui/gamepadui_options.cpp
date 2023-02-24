@@ -78,6 +78,7 @@ public:
     void OnMouseWheeled( int delta ) OVERRIDE;
 
     void UpdateResolutions();
+    void ClearBindings();
     void FillInBindings();
     void ApplyKeyBindings();
 
@@ -1384,6 +1385,12 @@ void GamepadUIOptionsPanel::OnMouseWheeled( int delta )
     m_Tabs[ GetActiveTab() ].ScrollState.OnMouseWheeled( delta * 100.0f, GamepadUI::GetInstance().GetTime() );
 }
 
+CON_COMMAND( _gamepadui_resetkeys, "" )
+{
+    GamepadUIOptionsPanel::GetInstance()->ClearBindings();
+    GamepadUIOptionsPanel::GetInstance()->FillInBindings();
+}
+
 void GamepadUIOptionsPanel::OnCommand( char const* pCommand )
 {
     if ( !V_strcmp( pCommand, "action_back" ) )
@@ -1402,6 +1409,13 @@ void GamepadUIOptionsPanel::OnCommand( char const* pCommand )
         FlushHelperConVars();
         ApplyKeyBindings();
         GamepadUI::GetInstance().GetEngineClient()->ClientCmd_Unrestricted( "exec userconfig.cfg\nhost_writeconfig\nmat_savechanges\n" );
+    }
+    else if ( !V_strcmp( pCommand, "action_usedefaults" ) )
+    {
+        new GamepadUIGenericConfirmationPanel( GamepadUIOptionsPanel::GetInstance(), "UseDefaultsConfirm", GamepadUIString( "#GameUI_KeyboardSettings" ).String(), GamepadUIString("#GameUI_KeyboardSettingsText").String(),
+		[](){
+                GamepadUI::GetInstance().GetEngineClient()->ClientCmd_Unrestricted( "exec config_default.cfg\n_gamepadui_resetkeys\n" );
+            }, false, true);
     }
     else if ( StringHasPrefixCaseSensitive( pCommand, "tab " ) )
     {
@@ -1548,6 +1562,19 @@ void GamepadUIOptionsPanel::UpdateResolutions()
 
     _gamepadui_resolution.SetValue( nSelectedDefaultMode );
     m_pResolutionButton->SetToDefault();
+}
+
+void GamepadUIOptionsPanel::ClearBindings()
+{
+    for ( int i = 0; i < m_nTabCount; i++ )
+    {
+        for ( GamepadUIButton* pButton : m_Tabs[i].pButtons )
+        {
+            GamepadUIKeyButton* pKeyButton = dynamic_cast<GamepadUIKeyButton*>(pButton);
+            if ( pKeyButton )
+                pKeyButton->ClearKey();
+        }
+    }
 }
 
 // Mainly from GameUI
@@ -1753,6 +1780,11 @@ void GamepadUIOptionsPanel::SetActiveTab( int nTab )
     int nActiveTab = GetActiveTab();
     for ( int i = 0; i < m_nTabCount; i++ )
         m_Tabs[ i ].pTabButton->ForceDepressed( i == nActiveTab );
+
+    FooterButtonMask buttons = FooterButtons::Apply | FooterButtons::Back;
+    if ( V_strncmp( m_Tabs[nActiveTab].pTabButton->GetName(), "Keyboard", 8 ) == 0 )
+        buttons |= FooterButtons::UseDefaults;
+    SetFooterButtons( buttons );
 
     for ( GamepadUIButton *pButton : m_Tabs[ nActiveTab ].pButtons )
     {
