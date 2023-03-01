@@ -1828,6 +1828,7 @@ void GamepadUIOptionsPanel::LoadOptionTabs( const char *pszOptionsFile )
                 m_Tabs[ m_nTabCount ].pTabButton = button;
             }
 
+            m_Tabs[ m_nTabCount ].pTabButton->SetName( pTabData->GetName() );
             m_Tabs[ m_nTabCount ].bAlternating = pTabData->GetBool( "alternating" );
             m_Tabs[ m_nTabCount ].bHorizontal = pTabData->GetBool( "horizontal" );
 
