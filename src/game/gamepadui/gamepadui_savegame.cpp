@@ -691,7 +691,7 @@ void GamepadUISaveGamePanel::OnCommand( char const* pCommand )
 				{
 					if ( panel->GetSaveGame()->iTimestamp != NEW_SAVE_GAME_TIMESTAMP )
 					{
-						new GamepadUIGenericConfirmationPanel( GamepadUI::GetInstance().GetBasePanel(), "SaveOverwriteConfirmationPanel", "#GameUI_ConfirmOverwriteSaveGame_Title", "#GameUI_ConfirmOverwriteSaveGame_Info",
+						new GamepadUIGenericConfirmationPanel( this, "SaveOverwriteConfirmationPanel", "#GameUI_ConfirmOverwriteSaveGame_Title", "#GameUI_ConfirmOverwriteSaveGame_Info",
 						[this, pSave]()
 						{
 							SaveGame( pSave );
