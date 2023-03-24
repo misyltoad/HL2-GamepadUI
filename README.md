@@ -12,7 +12,9 @@ It's definitely not the cleanest thing in existence, especially as it was pretty
 
 ## What is here?
 
-Provided is the full GamepadUI code, as well as the .vpc projects to build it. Pre-built binaries for stock Source SDK 2013 are included as well (Windows only right now).
+Provided is the full GamepadUI code, as well as the .vpc projects to build it. Pre-built binaries for stock Source SDK 2013 are included as well (Windows only right now). 
+
+The UI can be enabled by adding `-gamepadui` to the startup parameters.
 
 ## Compiling
 
@@ -28,6 +30,10 @@ Lastly, the function PostMessageToAllSiblingsOfType will need to be re-enabled i
 
 SDK 2013 by default does not have the modifications to the regular GameUI that were made that do things such as hide the main menu logo, or have the new loading screens. </br>
 Provided in `game/bin` is a copy of GameUI for SDK 2013 with the modifications you can use, unfortunately the code for this cannot be provided.
+
+ `IsSteamDeck()` currently returns a check for -gamepadui on the startup parameters. This can be modified as needed.
+
+## Credits
 
 Special thanks to Madi for taking my code and making it compile against SDK 2013.</br>
 Thanks to my friend Dan Smith for helping with getting some screenshots for the chapter art.
