@@ -72,6 +72,8 @@ public:
     void UpdateGradients() OVERRIDE;
 
     void LoadOptionTabs( const char* pszOptionsFile );
+	
+    void ApplySchemeSettings( vgui::IScheme *pScheme ) OVERRIDE;
 
     void SetActiveTab( int nTab );
     int GetActiveTab();
@@ -2079,6 +2081,17 @@ void GamepadUIOptionsPanel::LoadOptionTabs( const char *pszOptionsFile )
 
             m_nTabCount++;
         }
+    }
+}
+
+void GamepadUIOptionsPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
+{
+    BaseClass::ApplySchemeSettings( pScheme );
+    
+    if (GamepadUI::GetInstance().GetScreenRatio() != 1.0f)
+    {
+        float flScreenRatio = GamepadUI::GetInstance().GetScreenRatio();
+        m_flTabsOffsetX *= (flScreenRatio * flScreenRatio);
     }
 }
 

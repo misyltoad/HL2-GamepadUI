@@ -199,6 +199,24 @@ public:
             vgui::surface()->DrawSetTexture( 0 );
         }
     }
+	
+    void ApplySchemeSettings( vgui::IScheme *pScheme )
+    {
+        BaseClass::ApplySchemeSettings( pScheme );
+
+        if (GamepadUI::GetInstance().GetScreenRatio() != 1.0f)
+        {
+            float flScreenRatio = GamepadUI::GetInstance().GetScreenRatio();
+
+            // For now, undo the scaling from base class
+            m_flWidth /= flScreenRatio;
+            for (int i = 0; i < ButtonStates::Count; i++)
+                m_flWidthAnimationValue[i] /= flScreenRatio;
+
+            SetSize( m_flWidth, m_flHeight + m_flExtraHeight );
+            DoAnimations( true );
+        }
+    }
 
     void NavigateTo() OVERRIDE
     {
@@ -307,6 +325,12 @@ void GamepadUIBonusMapsPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 {
     BaseClass::ApplySchemeSettings( pScheme );
     m_hGoalFont = pScheme->GetFont( "Goal.Font", true );
+
+    if (GamepadUI::GetInstance().GetScreenRatio() != 1.0f)
+    {
+        float flScreenRatio = GamepadUI::GetInstance().GetScreenRatio();
+        m_BonusOffsetX *= flScreenRatio;
+    }
 }
 
 void GamepadUIBonusMapsPanel::OnGamepadUIButtonNavigatedTo( vgui::VPANEL button )
