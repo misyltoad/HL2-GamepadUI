@@ -87,6 +87,7 @@ public:
     void OnKeyBound( const char *pKey );
 
     void OnKeyCodePressed( vgui::KeyCode code );
+    void OnCursorEntered();
 
     MESSAGE_FUNC_HANDLE( OnGamepadUIButtonNavigatedTo, "OnGamepadUIButtonNavigatedTo", button );
 
@@ -111,6 +112,7 @@ private:
 
     GamepadUITab m_Tabs[ MAX_OPTIONS_TABS ];
     int m_nTabCount = 0;
+    bool isKeyPress = false;
 
     GamepadUIWheelyWheel* m_pResolutionButton = NULL;
 
@@ -1696,6 +1698,8 @@ void GamepadUIOptionsPanel::OnKeyBound( const char *pKey )
 
 void GamepadUIOptionsPanel::OnKeyCodePressed( vgui::KeyCode code )
 {
+    isKeyPress = true;
+    
     ButtonCode_t buttonCode = GetBaseButtonCode( code );
 
 
@@ -1721,6 +1725,12 @@ void GamepadUIOptionsPanel::OnKeyCodePressed( vgui::KeyCode code )
     }
 }
 
+void GamepadUIOptionsPanel::OnCursorEntered()
+{
+    isKeyPress = false;
+    BaseClass::OnCursorEntered();
+}
+
 void GamepadUIOptionsPanel::OnGamepadUIButtonNavigatedTo( vgui::VPANEL button )
 {
     GamepadUIButton *pButton = dynamic_cast< GamepadUIButton * >( vgui::ipanel()->GetPanel( button, GetModuleName() ) );
@@ -1737,34 +1747,52 @@ void GamepadUIOptionsPanel::OnGamepadUIButtonNavigatedTo( vgui::VPANEL button )
         if ( nY + m_flFooterButtonsOffsetY + m_nFooterButtonHeight + pButton->GetTall() > nParentH || nY < m_flTabsOffsetY + flTabButtonHeight )
         {
             int nTargetY = 0;
-            int nThisButton = -1;
-            int nHeader = -1;
-            for ( int i = 0; i < m_Tabs[ GetActiveTab() ].pButtons.Count(); i++ )
-            {
-                if ( m_Tabs[ GetActiveTab() ].pButtons[i] == pButton)
-                {
-                    nThisButton = i;
-                    break;
-                }
-				
-                // For now, headers can be identified as disabled buttons
-                if (!m_Tabs[GetActiveTab()].pButtons[i]->IsEnabled())
-                    nHeader = i;
-                else
-                    nHeader = -1;
 
-                nTargetY += m_Tabs[ GetActiveTab() ].pButtons[i]->m_flHeight;
+            if (isKeyPress)
+            {
+                for (GamepadUIButton* pFindButton : m_Tabs[GetActiveTab()].pButtons)
+                {
+                    if (pFindButton == pButton)
+                        break;
+
+                    nTargetY += pFindButton->m_flHeight;
+                }
+
+                // Hack for section headers
+                if (m_Tabs[GetActiveTab()].pButtons.Count() >= 2 && m_Tabs[GetActiveTab()].pButtons[1] == pButton)
+                    nTargetY = 0;
+            }
+            else
+            {
+                int nThisButton = -1;
+                int nHeader = -1;
+                for (int i = 0; i < m_Tabs[GetActiveTab()].pButtons.Count(); i++)
+                {
+                    if (m_Tabs[GetActiveTab()].pButtons[i] == pButton)
+                    {
+                        nThisButton = i;
+                        break;
+                    }
+
+                    // For now, headers can be identified as disabled buttons
+                    if (!m_Tabs[GetActiveTab()].pButtons[i]->IsEnabled())
+                        nHeader = i;
+                    else
+                        nHeader = -1;
+
+                    nTargetY += m_Tabs[GetActiveTab()].pButtons[i]->m_flHeight;
+                }
+
+                // This button isn't part of the current tab, so don't scroll
+                if (nThisButton == -1)
+                    return;
+
+                // If this button has a section header above it and we're going up, scroll to it
+                if (nHeader != -1 && nY < nParentH / 2)
+                    nTargetY -= m_Tabs[GetActiveTab()].pButtons[nHeader]->m_flHeight;
             }
 
-            // This button isn't part of the current tab, so don't scroll
-            if (nThisButton == -1)
-                return;
-
-            // If this button has a section header above it and we're going up, scroll to it
-            if ( nHeader != -1 && nY < nParentH / 2 )
-                nTargetY -= m_Tabs[ GetActiveTab() ].pButtons[ nHeader ]->m_flHeight;
-
-            if ( nY < nParentH / 2 )
+            if (nY < nParentH / 2)
             {
                 nTargetY -= (pButton->m_flHeightAnimationValue[ButtonStates::Over] / 2);
             }
@@ -1775,7 +1803,7 @@ void GamepadUIOptionsPanel::OnGamepadUIButtonNavigatedTo( vgui::VPANEL button )
                 nTargetY += (pButton->m_flHeightAnimationValue[ButtonStates::Over] / 2);
             }
 
-            m_Tabs[ GetActiveTab() ].ScrollState.SetScrollTarget( nTargetY, GamepadUI::GetInstance().GetTime());
+            m_Tabs[GetActiveTab()].ScrollState.SetScrollTarget(nTargetY, GamepadUI::GetInstance().GetTime());
         }
     }
 }
